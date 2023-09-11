@@ -1,18 +1,32 @@
+import { faker } from '@faker-js/faker/locale/en';
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient({
-    log:['error', 'info' ,'query', 'warn']
+  log: ['error', 'info', 'query', 'warn']
 })
 
 async function main() {
-  const user = await prisma.user.create({
+
+  for(let i = 0 ; i <=12 ; i++){
+
+  const apartment = await prisma.apartment.create({
     data: {
-      userName: 'Alice',
-      email: 'alice@prisma.io',
-    },
+      bathrooms: faker.number.int(5),
+      kitchens: faker.number.int(5),
+      bedrooms: faker.number.int(1),
+      sqm: faker.number.int(5),
+      location: faker.location.city(),
+      email: faker.internet.email(),
+      phone: faker.phone.number(),
+      price: faker.number.int(5),
+      image: faker.image.urlPicsumPhotos(),
+      userId: 1,
+    }
   })
-  console.log(user)
 }
+
+}
+
 
 main()
   .then(async () => {

@@ -109,6 +109,19 @@ else{
     }
 })
 
+app.get('/apartaments', async (req, res) => {
+    try{
+        const apartment = await prisma.apartment.findMany()
+  console.log(apartment , 'ssss')
+
+        res.send(apartment)
+    }
+    catch(error){
+        //@ts-ignore
+            res.status(400).send({error: error.message})
+    }
+})
+
 app.listen(port, ()=>{
     console.log(path)
 })

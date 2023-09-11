@@ -11,13 +11,29 @@ datasource db {
 }
 
 model User {
+  id         Int         @id @default(autoincrement())
+  userName   String      @unique
+  email      String      @unique
+  password   String      @default("")
+  firstName  String      @default("")
+  lastName   String      @default("")
+  address    String      @default("")
+  phone      String      @default("")
+  avatar     String      @default("")
+  apartments Apartment[]
+}
+
+model Apartment {
   id        Int    @id @default(autoincrement())
-  userName  String @unique
+  bathrooms Int
+  kitchens  Int
+  bedrooms  Int
+  sqm       Int
   email     String @unique
-  password  String @default("")
-  firstName String @default("")
-  lastName  String @default("")
-  address   String @default("")
-  phone     String @default("")
-  avatar    String @default("")
+  phone     String @unique
+  price     Int
+  location  String
+  image     String
+  userId    Int
+  user      User   @relation(fields: [userId], references: [id])
 }
