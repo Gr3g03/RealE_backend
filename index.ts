@@ -112,13 +112,26 @@ else{
 app.get('/apartaments', async (req, res) => {
     try{
         const apartment = await prisma.apartment.findMany()
-  console.log(apartment , 'ssss')
-
         res.send(apartment)
     }
     catch(error){
         //@ts-ignore
             res.status(400).send({error: error.message})
+    }
+})
+
+app.post('/apartament/:id' , async(req, res)=> {
+    const {id} = req.params
+    try{
+        const apartament =  await prisma.apartment.findUnique({
+            where : {
+                id : Number(id) 
+            }
+        })
+        res.send(apartament)
+    }catch(error){
+        //@ts-ignore 
+        res.status(400).send({error: error.message})
     }
 })
 
