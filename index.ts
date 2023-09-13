@@ -17,6 +17,28 @@ app.use(bodyParser.urlencoded({extended:false}))
 app.use(express.json())
 app.use(express.static('public'))
 
+//  async function getTotalApartmentsInAllCities() {
+//   const cities = await prisma.city.findMany({
+//     include: {
+//       apartmentInCity: {
+//         select: {
+//           apartmentId: true
+//         }
+//       }
+//     }
+//   });
+
+//   let totalApartments = 0;
+
+//   for (const city of cities) {
+//     totalApartments += city.apartmentInCity.length;
+//   }
+
+//   console.log(`Total apartments in all cities: ${totalApartments}`);
+//   return totalApartments;
+// }
+
+// getTotalApartmentsInAllCities();   
 const path =  'http://localhost:4000'
 const port = 4000
 app.get('/', async(req, res)=>{
@@ -120,6 +142,49 @@ app.get('/apartaments', async (req, res) => {
     }
 })
 
+app.post('/apartament', async (req ,res)=> {
+const {
+    bathrooms,
+    kitchens,
+    bedrooms,
+    sqm,
+    email, 
+    phone, 
+    price,
+    location,
+    image,
+    userId,
+    cityName ,
+    title ,
+    description,
+} = req.body
+
+try{
+    const resp = await prisma.apartment.create({
+        data:{
+            bathrooms : bathrooms,
+            kitchens :kitchens,
+            bedrooms : bedrooms,
+            sqm :sqm,
+            email: email, 
+            phone:phone, 
+            price: price,
+            location: location,
+            image:image,
+            userId: userId,
+            cityName: cityName ,
+            title : title ,
+            description:description,
+        }
+    })
+    res.status(200).send(resp)
+
+}catch(error){
+    //@ts-ignore
+    res.status(400).send({error: error.message})
+}
+
+})
 app.post('/apartament/:id' , async(req, res)=> {
     const {id} = req.params
     try{
