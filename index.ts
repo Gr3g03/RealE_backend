@@ -18,24 +18,35 @@ app.use(express.json())
 app.use(express.static('public'))
 
 //  async function getTotalApartmentsInAllCities() {
+// //   const cities = await prisma.city.findMany({
+// //     include: {
+// //       apartments: {
+// //         select: {
+// //           cityId: true
+// //         }
+// //       }
+// //     }
+// //   });
 //   const cities = await prisma.city.findMany({
 //     include: {
-//       apartmentInCity: {
-//         select: {
-//           apartmentId: true
-//         }
+//             _count:{
+//                 select:{
+//                     apartmentInCity: true
+//                 }
+//             }
 //       }
-//     }
 //   });
 
 //   let totalApartments = 0;
 
 //   for (const city of cities) {
-//     totalApartments += city.apartmentInCity.length;
+//     // totalApartments += city.apartments.length;
+//     console.log(city.name);
+    
 //   }
 
-//   console.log(`Total apartments in all cities: ${totalApartments}`);
-//   return totalApartments;
+// //   console.log(`Total apartments in all cities: ${totalApartments}`);
+// //   return totalApartments;
 // }
 
 // getTotalApartmentsInAllCities();   
@@ -131,6 +142,7 @@ else{
     }
 })
 
+//get all
 app.get('/apartaments', async (req, res) => {
     try{
         const apartment = await prisma.apartment.findMany()
@@ -142,6 +154,64 @@ app.get('/apartaments', async (req, res) => {
     }
 })
 
+// get apartaments taht are in the same city
+app.get('/apartmentsincities', async (req, res) => {
+    try{
+        const cities = await prisma.city.findMany({
+            include: {
+                    _count:{
+                        select:{
+                            apartmentInCity: true
+                        }
+                    }
+              }
+          });
+          let data : any= []
+          cities.forEach(el => {
+            let handleData = {
+            id : el.id,
+            name: el.name,
+            total: el._count.apartmentInCity
+          }    
+          data.push(handleData)
+        });
+        res.send(data)
+        
+    }
+    catch(error){
+        //@ts-ignore
+            res.status(400).send({error: error.message})
+    }
+})
+
+//add new apartament in the city table
+app.post('/addNewApartament/:apartmentId/:cityId', async (req, res) => {
+    const { apartmentId, cityId } = req.params;
+  
+    try {
+      const resp = await prisma.apartmentInCity.create({
+        data: {
+          apartment: {
+            connect: {
+              id: Number(apartmentId) , 
+            },
+          },
+          city: {
+            connect: {
+              id: Number(cityId), 
+            },
+          },
+          total: 0,
+        },
+      });
+      res.send(resp);
+    } catch (error) {
+      //@ts-ignore
+      res.status(400).send({ error: error.message });
+    }
+  });
+
+// create a new apartament
 app.post('/apartament', async (req ,res)=> {
 const {
     bathrooms,
@@ -157,6 +227,7 @@ const {
     cityName ,
     title ,
     description,
+    cityId
 } = req.body
 
 try{
@@ -175,6 +246,7 @@ try{
             cityName: cityName ,
             title : title ,
             description:description,
+            cityId: cityId
         }
     })
     res.status(200).send(resp)
@@ -185,6 +257,8 @@ try{
 }
 
 })
+
+// get apartament by id
 app.post('/apartament/:id' , async(req, res)=> {
     const {id} = req.params
     try{

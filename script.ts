@@ -7,25 +7,26 @@ const prisma = new PrismaClient({
 
 async function main() {
 
-  for(let i = 0 ; i <=3 ; i++){
+  for(let i = 1 ; i <=8 ; i++){
 
-  const apartment = await prisma.apartment.create({
-    data: {
-      bathrooms: faker.number.int(5),
-      kitchens: faker.number.int(5),
-      bedrooms: faker.number.int(1),
-      sqm: faker.number.int(5),
-      location: faker.location.city(),
-      email: faker.internet.email(),
-      phone: faker.phone.number(),
-      price: faker.number.int(5),
-      image: faker.image.urlPicsumPhotos(),
-      cityName  : faker.location.city(),
-      title     : faker.lorem.sentence(),
-      description: faker.lorem.sentence(),
-      userId: 1,
-    }
-  })
+  // const apartment = await prisma.apartment.create({
+  //   data: {
+  //     bathrooms: faker.number.int(5),
+  //     kitchens: faker.number.int(5),
+  //     bedrooms: faker.number.int(1),
+  //     sqm: faker.number.int(5),
+  //     location: faker.location.city(),
+  //     email: faker.internet.email(),
+  //     phone: faker.phone.number(),
+  //     price: faker.number.int(5),
+  //     image: faker.image.urlPicsumPhotos(),
+  //     cityName  : faker.location.city(),
+  //     title     : faker.lorem.sentence(),
+  //     description: faker.lorem.sentence(),
+  //     userId: 1,
+  //     cityId: 1
+  //   }
+  // })
 
   // const city = await prisma.city.create({
   //   data: {
@@ -34,13 +35,13 @@ async function main() {
   // })
 
 
-  // const res =await prisma.apartmentInCity.create({
-  //   data:{
-  //     apartmentId: 1,
-  //     cityId     : 1,
-  //     total      : 0,
-  //   }
-  // })
+  const res =await prisma.apartmentInCity.create({
+    data:{
+      apartmentId: 1,
+      cityId     : 1,
+      total      : 0,
+    }
+  })
 }
 
 }
