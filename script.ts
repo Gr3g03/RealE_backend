@@ -36,10 +36,9 @@ async function main() {
 
 
   const res =await prisma.apartmentInCity.create({
-    data:{
+    data:{  
       apartmentId: 1,
       cityId     : 1,
-      total      : 0,
     }
   })
 }

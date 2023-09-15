@@ -154,6 +154,17 @@ app.get('/apartaments', async (req, res) => {
     }
 })
 
+app.get('/cities', async (req, res) => {
+    try{
+        const city = await prisma.city.findMany()
+        res.send(city)
+    }
+    catch(error){
+        //@ts-ignore
+            res.status(400).send({error: error.message})
+    }
+})
+
 // get apartaments taht are in the same city
 app.get('/apartmentsincities', async (req, res) => {
     try{
@@ -201,7 +212,6 @@ app.post('/addNewApartament/:apartmentId/:cityId', async (req, res) => {
               id: Number(cityId), 
             },
           },
-          total: 0,
         },
       });
       res.send(resp);

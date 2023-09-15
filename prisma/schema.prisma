@@ -48,7 +48,6 @@ model ApartmentInCity {
   id          Int       @id @default(autoincrement())
   apartmentId Int
   cityId      Int
-  total       Int
   apartment   Apartment @relation(fields: [apartmentId], references: [id])
   city        City      @relation(fields: [cityId], references: [id])
 }
@@ -56,6 +55,7 @@ model ApartmentInCity {
 model City {
   id              Int               @id @default(autoincrement())
   name            String
+  image           String?           @default("")
   apartmentInCity ApartmentInCity[]
   apartments      Apartment[]
 }
