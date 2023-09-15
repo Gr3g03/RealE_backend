@@ -24,16 +24,38 @@ model User {
 }
 
 model Apartment {
-  id        Int    @id @default(autoincrement())
-  bathrooms Int
-  kitchens  Int
-  bedrooms  Int
-  sqm       Int
-  email     String @unique
-  phone     String @unique
-  price     Int
-  location  String
-  image     String
-  userId    Int
-  user      User   @relation(fields: [userId], references: [id])
+  id              Int               @id @default(autoincrement())
+  bathrooms       Int
+  kitchens        Int
+  bedrooms        Int
+  sqm             Int
+  email           String
+  phone           String
+  price           Int
+  location        String
+  image           String
+  userId          Int
+  cityName        String
+  title           String
+  description     String
+  cityId          Int
+  user            User              @relation(fields: [userId], references: [id])
+  city            City              @relation(fields: [cityId], references: [id])
+  apartmentInCity ApartmentInCity[]
+}
+
+model ApartmentInCity {
+  id          Int       @id @default(autoincrement())
+  apartmentId Int
+  cityId      Int
+  total       Int
+  apartment   Apartment @relation(fields: [apartmentId], references: [id])
+  city        City      @relation(fields: [cityId], references: [id])
+}
+
+model City {
+  id              Int               @id @default(autoincrement())
+  name            String
+  apartmentInCity ApartmentInCity[]
+  apartments      Apartment[]
 }
