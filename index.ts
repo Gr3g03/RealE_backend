@@ -17,27 +17,27 @@ app.use(bodyParser.urlencoded({extended:false}))
 app.use(express.json())
 app.use(express.static('public'))
 
-//  async function getTotalApartmentsInAllCities() {
-// //   const cities = await prisma.city.findMany({
-// //     include: {
-// //       apartments: {
-// //         select: {
-// //           cityId: true
-// //         }
-// //       }
-// //     }
-// //   });
+ async function getTotalApartmentsInAllCities() {
 //   const cities = await prisma.city.findMany({
 //     include: {
-//             _count:{
-//                 select:{
-//                     apartmentInCity: true
-//                 }
-//             }
+//       apartments: {
+//         select: {
+//           cityId: true
+//         }
 //       }
+//     }
+//   });
+//   const cities = await prisma.apartmentInCity.findMany({
+//     where:{
+//         cityId : 1
+//     },
+//     include:{
+//         apartment: true
+//     }
 //   });
 
 //   let totalApartments = 0;
+// console.log(cities );
 
 //   for (const city of cities) {
 //     // totalApartments += city.apartments.length;
@@ -45,11 +45,11 @@ app.use(express.static('public'))
     
 //   }
 
-// //   console.log(`Total apartments in all cities: ${totalApartments}`);
-// //   return totalApartments;
-// }
+//   console.log(`Total apartments in all cities: ${totalApartments}`);
+//   return totalApartments;
+}
 
-// getTotalApartmentsInAllCities();   
+getTotalApartmentsInAllCities();   
 const path =  'http://localhost:4000'
 const port = 4000
 app.get('/', async(req, res)=>{
@@ -165,7 +165,7 @@ app.get('/cities', async (req, res) => {
     }
 })
 
-// get apartaments taht are in the same city
+// get the number of apartents in the same city
 app.get('/apartmentsincities', async (req, res) => {
     try{
         const cities = await prisma.city.findMany({
@@ -182,6 +182,7 @@ app.get('/apartmentsincities', async (req, res) => {
             let handleData = {
             id : el.id,
             name: el.name,
+            image : el.image,
             total: el._count.apartmentInCity
           }    
           data.push(handleData)
@@ -193,6 +194,31 @@ app.get('/apartmentsincities', async (req, res) => {
         //@ts-ignore
             res.status(400).send({error: error.message})
     }
+})
+
+// get apartaments with the same cityId
+app.post('/getAllApartamentsinCity/:cityId' , async (req, res) => {
+    const {cityId} = req.params
+    try{
+        const cities = await prisma.apartmentInCity.findMany({
+            where:{
+                cityId : Number(cityId)
+            },
+            include:{
+                apartment: true
+            }
+          });
+          let data : any= []
+
+          cities.forEach(element => {
+            data.push(element.apartment)
+        });
+        res.status(200).send(data)
+
+    }catch (error) {
+        //@ts-ignore
+        res.status(400).send({ error: error.message });
+      }
 })
 
 //add new apartament in the city table
