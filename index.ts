@@ -143,10 +143,16 @@ else{
 })
 
 //get all
-app.get('/apartaments', async (req, res) => {
+app.post('/apartaments', async (req, res) => {
+    const{itemsPerPage , currentPage } = req.body
+
     try{
-        const apartment = await prisma.apartment.findMany()
-        res.send(apartment)
+        const data = await prisma.apartment.findMany()
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const totalPages = data && data.length / itemsPerPage;
+        const currentItems = data && data.slice(startIndex, endIndex);
+        res.status(200).send({currentItems , totalPages});
     }
     catch(error){
         //@ts-ignore
@@ -285,7 +291,23 @@ try{
             cityId: cityId
         }
     })
-    res.status(200).send(resp)
+
+     await prisma.apartmentInCity.create({
+        data: {
+          apartment: {
+            connect: {
+              id: Number(resp.id) , 
+            },
+          },
+          city: {
+            connect: {
+              id: Number(cityId), 
+            },
+          },
+        },
+      });
+
+    res.send(resp)
 
 }catch(error){
     //@ts-ignore
