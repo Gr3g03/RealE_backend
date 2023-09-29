@@ -150,7 +150,7 @@ app.post('/apartaments', async (req, res) => {
         const data = await prisma.apartment.findMany()
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        const totalPages = data && data.length / itemsPerPage;
+        const totalPages = data &&  Math.ceil(data.length / itemsPerPage) ;
         const currentItems = data && data.slice(startIndex, endIndex);
         res.status(200).send({currentItems , totalPages});
     }
