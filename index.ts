@@ -228,30 +228,30 @@ app.post('/getAllApartamentsinCity/:cityId' , async (req, res) => {
 })
 
 //add new apartament in the city table
-app.post('/addNewApartament/:apartmentId/:cityId', async (req, res) => {
-    const { apartmentId, cityId } = req.params;
+// app.post('/addNewApartament/:apartmentId/:cityId', async (req, res) => {
+//     const { apartmentId, cityId } = req.params;
   
-    try {
-      const resp = await prisma.apartmentInCity.create({
-        data: {
-          apartment: {
-            connect: {
-              id: Number(apartmentId) , 
-            },
-          },
-          city: {
-            connect: {
-              id: Number(cityId), 
-            },
-          },
-        },
-      });
-      res.send(resp);
-    } catch (error) {
-      //@ts-ignore
-      res.status(400).send({ error: error.message });
-    }
-  });
+//     try {
+//       const resp = await prisma.apartmentInCity.create({
+//         data: {
+//           apartment: {
+//             connect: {
+//               id: Number(apartmentId) , 
+//             },
+//           },
+//           city: {
+//             connect: {
+//               id: Number(cityId), 
+//             },
+//           },
+//         },
+//       });
+//       res.send(resp);
+//     } catch (error) {
+//       //@ts-ignore
+//       res.status(400).send({ error: error.message });
+//     }
+//   });
 
 // create a new apartament
 app.post('/apartament', async (req ,res)=> {
@@ -315,6 +315,67 @@ try{
 }
 
 })
+// update 1 apartament
+app.patch('/apartament/:apartmentId', async (req, res) => {
+    const apartmentId = req.params.apartmentId
+  
+    const {
+      bathrooms,
+      kitchens,
+      bedrooms,
+      sqm,
+      email,
+      phone,
+      price,
+      location,
+      image,
+      userId,
+      cityName,
+      title,
+      description,
+      cityId,
+    } = req.body;
+  
+    try {
+      const existingApartment = await prisma.apartment.findUnique({
+        where: {
+          id: Number(apartmentId),
+        },
+      });
+  
+      if (!existingApartment) {
+        return res.status(404).send({ error: 'Apartment not found' });
+      }
+  
+      const updatedApartment = await prisma.apartment.update({
+        where: {
+            id: Number(apartmentId),
+        },
+        data: {
+          bathrooms: bathrooms,
+          kitchens: kitchens,
+          bedrooms: bedrooms,
+          sqm: sqm,
+          email: email,
+          phone: phone,
+          price: price,
+          location: location,
+          image: image,
+          userId: userId,
+          cityName: cityName,
+          title: title,
+          description: description,
+          cityId: cityId,
+        },
+      });
+  
+      res.send(updatedApartment);
+    } catch (error) {
+      //@ts-ignore
+      res.status(400).send({ error: error.message });
+    }
+  });
+  
 
 // get apartament by id
 app.post('/apartament/:id' , async(req, res)=> {
