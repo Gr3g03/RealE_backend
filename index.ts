@@ -143,7 +143,7 @@ else{
 })
 
 //get all
-app.post('/apartaments', async (req, res) => {
+app.post('/allApartaments', async (req, res) => {
     const{itemsPerPage , currentPage } = req.body
 
     try{
@@ -160,6 +160,42 @@ app.post('/apartaments', async (req, res) => {
     }
 })
 
+
+app.post('/apartaments', async (req, res) => {
+    const { itemsPerPage, currentPage } = req.body;
+    const authToken = req.headers.authorization;
+  
+    try {
+      const userId = await getUserIdFromToken(authToken !== undefined ? authToken : '');
+  
+      const userApartments = await prisma.apartment.findMany({
+        where: {
+          userId: Number(userId),
+        },
+      });
+  
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const totalApartments = userApartments.length;
+      const totalPages = Math.ceil(totalApartments / itemsPerPage);
+      const currentItems = userApartments.slice(startIndex, endIndex);
+  
+      res.status(200).send({ currentItems, totalPages });
+    } catch (error) {
+      //@ts-ignore
+      res.status(400).send({ error: error.message });
+    }
+  });
+  
+  async function getUserIdFromToken(token : string) {
+    try {
+      //@ts-ignore
+      const decodedToken = jwt.verify(token, process.env.MY_SECRET)
+      return decodedToken.id;
+    } catch (error) {
+      throw new Error('Invalid token');
+    }
+  }
 app.get('/cities', async (req, res) => {
     try{
         const city = await prisma.city.findMany()
